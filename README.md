@@ -7,7 +7,7 @@ We pre-trained BERT model to improve the performance of Chinese CNER. Different 
 
 ## Model structure
 
-![Model Structure](net.svg)
+![Model Structure](figures/net.svg)
 
 
 ## Usage
