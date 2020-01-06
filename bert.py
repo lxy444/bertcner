@@ -11,6 +11,7 @@ import os
 import random
 import json
 import codecs
+import time
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -404,7 +405,7 @@ parser.add_argument("--do_lower_case",
                     action='store_true',
                     help="Set this flag if you are using an uncased model.")
 parser.add_argument("--train_batch_size",
-                    default=8,
+                    default=6,
                     type=int,
                     help="Total batch size for training.")
 parser.add_argument("--eval_batch_size",
@@ -451,6 +452,9 @@ parser.add_argument('--server_ip', type=str, default='', help="Can be used for d
 parser.add_argument('--server_port', type=str, default='', help="Can be used for distant debugging.")
 args = parser.parse_args()
 
+print(args)
+
+start_time = time.time()
 
 
 if args.server_ip and args.server_port:
@@ -526,17 +530,19 @@ tokenizer = BertTokenizer.from_pretrained(args.bert_model, do_lower_case = args.
 
 
 ## prepare data
+
 ## ccks 2018
 if args.data_dir == 'data/ccks2018/':
 
     train_all = processor.get_train_examples(args.data_dir)
-    # train_all.extend(train_all[:14])  # 添加 14 个样本, 便于 mini-batch
-    num_dev = int(0.2 * len(train_all))  # 504
+    # train_all.extend(train_examples[:14])  # 添加 14 个样本, 便于 mini-batch
+    # num_dev = round(0.2 * len(train_all))
+    num_dev = 504
     dev_indices = np.random.choice(len(train_all), num_dev, replace = False)
     train_indices = [j for j in range(len(train_all)) if j not in dev_indices]
     dev_examples = [train_all[i] for i in dev_indices]
     # train_examples = [train_all[i] for i in train_indices]
-    train_examples = train_all  # 使用全部训练数据训练
+    train_examples = train_all  # 使用全部训练数据
 
 
     logger.info("number of train examples: {}".format(len(train_examples)))
@@ -561,12 +567,13 @@ if args.data_dir == 'data/ccks2017/':
 
     train_all = processor.get_train_examples(args.data_dir)
     # train_all.extend(train_all[:6])  # 添加 6 个样本, 便于 mini-batch
-    num_dev = int(0.2 * len(train_all))  # 976
+    num_dev = round(0.2 * len(train_all))
+    # num_dev = 976
     dev_indices = np.random.choice(len(train_all), num_dev, replace = False)
     train_indices = [j for j in range(len(train_all)) if j not in dev_indices]
     dev_examples = [train_all[i] for i in dev_indices]
     # train_examples = [train_all[i] for i in train_indices]
-    train_examples = train_all  # 使用全部训练数据训练
+    train_examples = train_all
 
 
     logger.info("number of train examples: {}".format(len(train_examples)))
@@ -600,14 +607,12 @@ if args.local_rank != -1:
 
 # Prepare model
 cache_dir = args.cache_dir if args.cache_dir else os.path.join(str(PYTORCH_PRETRAINED_BERT_CACHE), 'distributed_{}'.format(args.local_rank))
-
-model = BertForTokenClassification.from_pretrained(args.bert_model, cache_dir=cache_dir, num_labels = num_labels)
-
+model = BertForTokenClassification.from_pretrained(args.bert_model,
+          cache_dir=cache_dir,
+          num_labels = num_labels)
 if args.fp16:
     model.half()
-
 model.to(device)
-
 if args.local_rank != -1:
     try:
         from apex.parallel import DistributedDataParallel as DDP
@@ -624,7 +629,6 @@ optimizer_grouped_parameters = [
     {'params': [p for n, p in param_optimizer if not any(nd in n for nd in no_decay)], 'weight_decay': 0.01},
     {'params': [p for n, p in param_optimizer if any(nd in n for nd in no_decay)], 'weight_decay': 0.0}
     ]
-
 if args.fp16:
     try:
         from apex.optimizers import FP16_Optimizer
@@ -744,7 +748,7 @@ if args.do_train:
     loss_history = []
 
 
-    for i in trange(int(args.num_train_epochs), desc = "Epoch"):
+    for num_epoch in trange(int(args.num_train_epochs), desc = "Epoch"):
         tr_loss = 0
         nb_tr_examples, nb_tr_steps = 0, 0
         for step, batch in enumerate(tqdm(train_dataloader, desc="Iteration")):
@@ -775,14 +779,14 @@ if args.do_train:
                 optimizer.zero_grad()
                 global_step += 1
         
-        out_file = 'epoch_' + str(i) + '_tag.txt'
+        out_file = 'epoch_' + str(num_epoch) + '_tag.txt'
         out_file = os.path.join(args.output_dir, out_file) 
-        (p_score, r_score, f_score), i = evaluate(model, test_data, out_file)
+        (p_score, r_score, f_score), _ = evaluate(model, test_data, out_file)
 
         loss_history.append(loss)
         acc_history.append(f_score)
 
-        logger.info(("precision: {}, recall: {}, f1 score: {}".format(p_score, r_score, f_score)))
+        logger.info(("Epoch: {}, precision: {}, recall: {}, f1 score: {}".format(num_epoch, p_score, r_score, f_score)))
 
 
     ## plot curve
@@ -901,3 +905,12 @@ if args.do_eval and (args.local_rank == -1 or torch.distributed.get_rank() == 0)
         logger.info("\n%s", report)
         writer.write(report)
     
+
+
+end_time = time.time()
+elapsed_time = end_time - start_time
+print(elapsed_time)
+print(time.strftime("%H:%M:%S", time.gmtime(elapsed_time)))
+
+
+
