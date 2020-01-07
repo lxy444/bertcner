@@ -1,0 +1,16 @@
+行 1_1 O
+直 1_2 B-surgery
+肠 1_3 I-surgery
+癌 1_4 I-surgery
+根 1_5 I-surgery
+治 1_6 I-surgery
+术 1_7 E-surgery
+
+淋 2_1 B-anatomy
+巴 2_2 I-anatomy
+结 2_3 E-anatomy
+未 2_4 O
+查 2_5 O
+见 2_6 O
+癌 2_7 O
+。 2_8 O
