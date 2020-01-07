@@ -1,0 +1,16 @@
+无 1_1 O
+腹 1_2 S-anatomy
+痛 1_3 S-symptom_description
+腹 1_4 S-anatomy
+胀 1_5 S-symptom_description
+胀 1_6 S-symptom_description
+不 1_7 B-symptom_description
+适 1_8 E-symptom_description
+， 1_9 O
+
+给 2_1 O
+予 2_2 O
+奥 2_3 B-medicine
+沙 2_4 I-medicine
+利 2_5 I-medicine
+铂 2_6 E-medicine
