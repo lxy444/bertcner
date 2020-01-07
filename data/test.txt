@@ -1,1 +1,15 @@
-aaa
+中 1_1 B-anatomy
+下 1_2 I-anatomy
+腹 1_3 I-anatomy
+部 1_4 E-anatomy
+闷 1_5 B-symptom_description
+痛 1_6 I-symptom_description
+不 1_7 I-symptom_description
+适 1_8 E-symptom_description
+
+为 2_1 O
+持 2_2 O
+续 2_3 O
+性 2_4 O
+隐 2_5 B-symptom_description
+痛 2_6 E-symptom_description
