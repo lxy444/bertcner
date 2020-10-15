@@ -12,6 +12,12 @@ We pre-trained BERT model to improve the performance of Chinese CNER. Different 
 
 ## Usage
 
+### Pre-trained models
+For replication, we uploaded two models in Baidu Netdisk.
+
+Link: https://pan.baidu.com/s/1obzG6OSbu77duhusWg2xmQ
+Code: k53q
+
 
 ### Examples
 To replicate the result of CCKS-2018 dataset
