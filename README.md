@@ -2,9 +2,9 @@
 
 
 ## Introduction
-**Code for paper [Chinese clinical named entity recognition with variant neural structures based on BERT methods](https://www.sciencedirect.com/science/article/pii/S1532046420300502)
+**Code for paper** [Chinese clinical named entity recognition with variant neural structures based on BERT methods](https://www.sciencedirect.com/science/article/pii/S1532046420300502)
 
-**Paper url: https://www.sciencedirect.com/science/article/pii/S1532046420300502
+**Paper url**: https://www.sciencedirect.com/science/article/pii/S1532046420300502
 
 We pre-trained BERT model to improve the performance of Chinese CNER. Different layers such as Long Short-Term Memory (LSTM) and Conditional Random Field (CRF) were used to extract the text features and decode the predicted tags respectively. And we also proposed a new strategy to incorporate dictionary features into the model. Radical features of Chinese characters were also used to improve the model performance.
 
